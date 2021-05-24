@@ -9,12 +9,15 @@ import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class AudioListActivity extends AppCompatActivity {
+
+
 
     ArrayList<AudioFiles> Voices = getData();                       //계속 바뀔 리스트
     ArrayList<AudioFiles> VoicesOriginal = getData();              //원래 리스트. 바뀌지 않음
@@ -25,6 +28,9 @@ public class AudioListActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audiostreamingpage);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.hide();
 
         EditText editSearch = (EditText) findViewById(R.id.editSearch);
 
@@ -59,17 +65,23 @@ public class AudioListActivity extends AppCompatActivity {
 
         Audio_ListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 
-            MediaPlayer mediaPlayer;
-
+            MediaPlayer mediaPlayer = new MediaPlayer();
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
                 try {
-                    mediaPlayer = new MediaPlayer();
+                    if (mediaPlayer.isPlaying()){
+                        mediaPlayer.stop();
+                        mediaPlayer.reset();
+                    }
+                    String url = Voices.get(groupPosition).Url.get(childPosition);
+                    mediaPlayer.setDataSource(url);
+
+//                    mediaPlayer = new MediaPlayer();
 //                    if(mediaPlayer.isPlaying()) {
 //                        mediaPlayer.pause();
 //                    }
-                    String url = Voices.get(groupPosition).Url.get(childPosition);
-                    mediaPlayer.setDataSource(url);
+//                    String url = Voices.get(groupPosition).Url.get(childPosition);
+//                    mediaPlayer.setDataSource(url);
 //                    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
 //                        @Override
 //                        public void onPrepared(MediaPlayer mp) {
@@ -78,9 +90,10 @@ public class AudioListActivity extends AppCompatActivity {
 //                    });
                     mediaPlayer.prepare();
                     mediaPlayer.start();
+                }
 
-                } catch (IOException ioException) {
-                    ioException.printStackTrace();
+                catch (IOException e) {
+
                 }
                 return false;
             }
@@ -128,13 +141,13 @@ public class AudioListActivity extends AppCompatActivity {
 
         if (charText.length() <= 0){
             Voices.addAll(VoicesOriginal);
-            Toast.makeText(getApplicationContext(),"대사를 입력하세요",Toast.LENGTH_SHORT).show();
+            // Toast.makeText(getApplicationContext(),"대사를 입력하세요",Toast.LENGTH_SHORT).show();
         }
         else {
 
             for (int i = 0 ; i < VoicesOriginal.size(); i++){
-                if (VoicesOriginal.get(i).Voice.toLowerCase().contains(charText)){
-                    Toast.makeText(getApplicationContext(),"일치하는 결과 존재",Toast.LENGTH_SHORT).show();
+                if (VoicesOriginal.get(i).Voice.toLowerCase().contains(charText) || VoicesOriginal.get(i).Voice.toUpperCase().contains(charText)){
+
                     Voices.add(VoicesOriginal.get(i));
                 }
             }

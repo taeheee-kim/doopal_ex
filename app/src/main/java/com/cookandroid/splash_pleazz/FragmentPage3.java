@@ -1,6 +1,7 @@
 package com.cookandroid.splash_pleazz;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,10 +22,12 @@ public class FragmentPage3 extends Fragment implements View.OnClickListener{
         Button btn_faq = view.findViewById(R.id.btn_faq);
         Button btn_login = view.findViewById(R.id.btn_login);
         Button btn_search_test = view.findViewById(R.id.btn_search_test);
+        Button btn_112 = view.findViewById(R.id.btn_112);
 
         btn_faq.setOnClickListener(this);
         btn_login.setOnClickListener(this);
         btn_search_test.setOnClickListener(this);
+        btn_112.setOnClickListener(this);
 
         return view;
     }
@@ -48,6 +51,9 @@ public class FragmentPage3 extends Fragment implements View.OnClickListener{
                 intent = new Intent(getActivity(), Search_test.class);
                 startActivity(intent);
                 break;
+            case R.id.btn_112:
+                intent = new Intent(Intent.ACTION_VIEW, Uri.parse("tel:/112"));
+                startActivity(intent);
         }
     }
 }
