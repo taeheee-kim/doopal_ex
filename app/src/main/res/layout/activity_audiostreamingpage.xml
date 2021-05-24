@@ -25,6 +25,12 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:src="@drawable/icon_postbox"></ImageView>
+    <EditText
+        android:id="@+id/editSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="대사를 입력하세요">
+    </EditText>
 
     <ExpandableListView
         android:id="@+id/Audio_ListView"
