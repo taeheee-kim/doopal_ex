@@ -1,5 +1,6 @@
 package com.cookandroid.splash_pleazz;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.text.Editable;
@@ -68,38 +69,18 @@ public class AudioListActivity extends AppCompatActivity {
             MediaPlayer mediaPlayer = new MediaPlayer();
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
-                try {
-                    if (mediaPlayer.isPlaying()){
-                        mediaPlayer.stop();
-                        mediaPlayer.reset();
-                    }
-                    String url = Voices.get(groupPosition).Url.get(childPosition);
-                    mediaPlayer.setDataSource(url);
 
-//                    mediaPlayer = new MediaPlayer();
-//                    if(mediaPlayer.isPlaying()) {
-//                        mediaPlayer.pause();
-//                    }
-//                    String url = Voices.get(groupPosition).Url.get(childPosition);
-//                    mediaPlayer.setDataSource(url);
-//                    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-//                        @Override
-//                        public void onPrepared(MediaPlayer mp) {
-//                            mp.start();
-//                        }
-//                    });
-                    mediaPlayer.prepare();
-                    mediaPlayer.start();
-                }
+                Intent intent = new Intent(AudioListActivity.this,PopupActivity.class);
+                intent.putExtra("url_data",Voices.get(groupPosition).Url.get(childPosition));
+                intent.putExtra("FileName_data",Voices.get(groupPosition).FileName.get(childPosition));
+                startActivity(intent);
 
-                catch (IOException e) {
-
-                }
                 return false;
             }
         });
 
     }
+
 
     private ArrayList<AudioFiles> getData(){
         AudioFiles a1 = new AudioFiles("test voice 1");
@@ -107,14 +88,14 @@ public class AudioListActivity extends AppCompatActivity {
         a1.AudioComment.add("테스트 2");
         a1.Url.add("https://firebasestorage.googleapis.com/v0/b/project-1252226275473945869.appspot.com/o/Audio1.m4a?alt=media&token=7111f393-d7e7-4305-bdc2-b2b2467ccfca");
         a1.Url.add("https://firebasestorage.googleapis.com/v0/b/project-1252226275473945869.appspot.com/o/Audio2.m4a?alt=media&token=3bd6d687-0d70-4f87-9e6b-503349beccb6");
-        a1.FileName.add("Audio1.m4a");
-        a1.FileName.add("Audio2.m4a");
+        a1.FileName.add("Audio1");
+        a1.FileName.add("Audio2");
 
         AudioFiles a2 = new AudioFiles("text voice 2");
         a2.AudioComment.add("테스트 3");
         a2.AudioComment.add("테스트 4");
         a2.Url.add("https://firebasestorage.googleapis.com/v0/b/project-1252226275473945869.appspot.com/o/Audio3.m4a?alt=media&token=4d0928b5-2373-43cb-b5b4-9b9ef9b6217d");
-        a2.FileName.add("Audio3.m4a");
+        a2.FileName.add("Audio3");
 
         AudioFiles a3 = new AudioFiles("text voice 3");
         AudioFiles a4 = new AudioFiles("text voice 4");

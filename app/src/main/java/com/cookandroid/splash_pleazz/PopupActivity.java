@@ -1,19 +1,36 @@
 package com.cookandroid.splash_pleazz;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.core.Context;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import java.io.File;
 import java.io.IOException;
 
 public class PopupActivity extends Activity {
     Button btn_pop_play,btn_pop_pause,btn_pop_download;
+    FirebaseStorage firebaseStorage;
+    StorageReference storageReference,ref;
+    String FileName_data;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -26,15 +43,19 @@ public class PopupActivity extends Activity {
         btn_pop_play = (Button)findViewById(R.id.btn_pop_play);
         btn_pop_pause = (Button)findViewById(R.id.btn_pop_pause);
         btn_pop_download = (Button)findViewById(R.id.btn_pop_download);
+        MediaPlayer mediaPlayer;
+        mediaPlayer = new MediaPlayer();
+
+        //데이터 가져오기
+        Intent intent = getIntent();
+        String url_data = intent.getStringExtra("url_data");
+        FileName_data = intent.getStringExtra("FileName_data");
 
         btn_pop_play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MediaPlayer mediaPlayer;
-                mediaPlayer = new MediaPlayer();
-                String url = "https://firebasestorage.googleapis.com/v0/b/project-1252226275473945869.appspot.com/o/Audio1.m4a?alt=media&token=7111f393-d7e7-4305-bdc2-b2b2467ccfca";
                 try {
-                    mediaPlayer.setDataSource(url);
+                    mediaPlayer.setDataSource(url_data);
                     mediaPlayer.prepare();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -42,10 +63,49 @@ public class PopupActivity extends Activity {
                 mediaPlayer.start();
             }
         });
-        //데이터 가져오기
-        //Intent intent = getIntent();
-        //String data = intent.getStringExtra("data");
-        //txtText.setText(data);
+
+        btn_pop_pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mediaPlayer.stop();
+                mediaPlayer.reset();
+            }
+        });
+
+        btn_pop_download.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                download();
+            }
+        });
+    }
+
+    public void download(){
+        storageReference = firebaseStorage.getInstance().getReference();
+        ref = storageReference.child(FileName_data +".m4a");
+        ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onSuccess(Uri uri) {
+                String url = uri.toString();
+                downloadFiles(PopupActivity.this,FileName_data,"m4a", Environment.DIRECTORY_DOWNLOADS,url);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void downloadFiles(android.content.Context context, String fileName, String fileExtension, String destinationDirectory, String url){
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(context.DOWNLOAD_SERVICE);
+        Uri uri = Uri.parse(url);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalFilesDir(context,destinationDirectory,fileName+fileExtension);
+        downloadManager.enqueue(request);
     }
 
     public void mOnClose(View v){
@@ -67,9 +127,9 @@ public class PopupActivity extends Activity {
         return true;
     }
 
-    @Override
-    public void onBackPressed(){
-        //안드로이드 백버튼 막기
-        return;
-    }
+//    @Override
+//    public void onBackPressed(){
+//        //안드로이드 백버튼 막기
+//        return;
+//    }
 }

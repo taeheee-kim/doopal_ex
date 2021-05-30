@@ -33,6 +33,7 @@
         <activity android:name=".StreamingActivity" />
         <activity android:name=".AudioListActivity"/>
         <activity android:name=".pop_up_ex">
+
         </activity>
         <activity android:name=".PopupActivity" android:theme="@android:style/Theme.Dialog" />
     </application>
