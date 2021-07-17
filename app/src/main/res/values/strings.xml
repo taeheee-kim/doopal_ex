@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">splash_pleazz</string>
+    <string name="app_name">
+        splash_pleazz
+    </string>
+    <string name="email">
+        E-mail : abc123@gmail.com
+    </string>
+    <string name="ig">
+        IG : abc123@gmail.com
+    </string>
+
+
 </resources>

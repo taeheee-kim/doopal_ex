@@ -16,6 +16,8 @@
         <activity android:name=".FaqAdapter" />
         <activity android:name=".AskActivity"/>
         <activity android:name=".Faq" />
+        <activity android:name=".Faq_test" />
+        <activity android:name=".Faq_test_Adapter" />
         <activity android:name=".postbox" />
         <activity android:name=".taxi" />
         <activity android:name=".MainActivity" />
