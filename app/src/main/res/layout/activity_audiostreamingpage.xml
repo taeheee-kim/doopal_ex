@@ -25,6 +25,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
         android:src="@drawable/icon_postbox"></ImageView>
+
     <EditText
         android:id="@+id/editSearch"
         android:layout_width="match_parent"
@@ -35,10 +36,60 @@
     <ExpandableListView
         android:id="@+id/Audio_ListView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="300dp"
         android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginBottom="5dp"></ExpandableListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:background="#562F11D1"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/audio_name"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:layout_weight="5"
+            android:text="@string/audio_name"
+            android:textSize="15dp"></TextView>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="5"
+            >
+
+            <Button
+                android:id="@+id/audio_play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:layout_marginRight="10dp"
+                android:text="재생"></Button>
+
+            <Button
+                android:id="@+id/audio_pause"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:layout_marginRight="10dp"
+                android:text="멈춤"></Button>
+
+            <Button
+                android:id="@+id/audio_download"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:text="다운로드"></Button>
+        </LinearLayout>
+    </LinearLayout>
 
 </LinearLayout>

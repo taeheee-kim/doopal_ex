@@ -1,32 +1,51 @@
 package com.cookandroid.splash_pleazz;
 
+import android.app.DownloadManager;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class AudioListActivity extends AppCompatActivity {
 
-
-
     ArrayList<AudioFiles> Voices = getData();                       //계속 바뀔 리스트
     ArrayList<AudioFiles> VoicesOriginal = getData();              //원래 리스트. 바뀌지 않음
 
     AudioListAdapter adapter;
 
+    FirebaseStorage firebaseStorage;
+    StorageReference storageReference,ref;
+
+    String url_data="";
+    String FileName_data="";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_audiostreamingpage);
 
@@ -64,23 +83,100 @@ public class AudioListActivity extends AppCompatActivity {
         adapter = new AudioListAdapter(this,Voices);
         Audio_ListView.setAdapter(adapter);
 
+        MediaPlayer mediaPlayer;
+        mediaPlayer = new MediaPlayer();
+        TextView audio_name = (TextView)findViewById(R.id.audio_name);
+
         Audio_ListView.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
 
-            MediaPlayer mediaPlayer = new MediaPlayer();
+
             @Override
             public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
 
-                Intent intent = new Intent(AudioListActivity.this,PopupActivity.class);
-                intent.putExtra("url_data",Voices.get(groupPosition).Url.get(childPosition));
-                intent.putExtra("FileName_data",Voices.get(groupPosition).FileName.get(childPosition));
-                startActivity(intent);
+                //Intent intent = new Intent(AudioListActivity.this,PopupActivity.class);
+                //intent.putExtra("url_data",Voices.get(groupPosition).Url.get(childPosition));
+                //intent.putExtra("FileName_data",Voices.get(groupPosition).FileName.get(childPosition));
+                //startActivity(intent);
+
+                url_data = Voices.get(groupPosition).Url.get(childPosition);
+                FileName_data = Voices.get(groupPosition).FileName.get(childPosition);
+                audio_name.setText(FileName_data);
+//                mediaPlayer.stop();
+//                mediaPlayer.reset();
+//                try {
+//                    mediaPlayer.setDataSource(url_data);
+//                    mediaPlayer.prepare();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//                mediaPlayer.start();
 
                 return false;
             }
         });
 
+        Button audio_play = (Button)findViewById(R.id.audio_play);
+        Button audio_pause = (Button)findViewById(R.id.audio_pause);
+        Button audio_download = (Button)findViewById(R.id.audio_download);
+
+        if(url_data.isEmpty()||FileName_data.isEmpty()) {
+            audio_play.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    try {
+                        mediaPlayer.setDataSource(url_data);
+                        mediaPlayer.prepare();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    mediaPlayer.start();
+                }
+            });
+
+            audio_pause.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mediaPlayer.stop();
+                    mediaPlayer.reset();
+                }
+            });
+
+            audio_download.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    download();
+                }
+            });
+        }
     }
 
+    public void download(){
+        storageReference = firebaseStorage.getInstance().getReference();
+        ref = storageReference.child(FileName_data +".m4a");
+        ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @RequiresApi(api = Build.VERSION_CODES.M)
+            @Override
+            public void onSuccess(Uri uri) {
+                String url = uri.toString();
+                downloadFiles(AudioListActivity.this,FileName_data,"m4a", Environment.DIRECTORY_DOWNLOADS,url);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+
+            }
+        });
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    public void downloadFiles(android.content.Context context, String fileName, String fileExtension, String destinationDirectory, String url){
+        DownloadManager downloadManager = (DownloadManager) context.getSystemService(context.DOWNLOAD_SERVICE);
+        Uri uri = Uri.parse(url);
+        DownloadManager.Request request = new DownloadManager.Request(uri);
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        request.setDestinationInExternalFilesDir(context,destinationDirectory,fileName+fileExtension);
+        downloadManager.enqueue(request);
+    }
 
     private ArrayList<AudioFiles> getData(){
         AudioFiles a1 = new AudioFiles("test voice 1");

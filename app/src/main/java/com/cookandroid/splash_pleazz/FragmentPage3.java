@@ -20,11 +20,13 @@ public class FragmentPage3 extends Fragment implements View.OnClickListener{
         View view = inflater.inflate(R.layout.fragment_page_3, container, false);
 
         Button btn_faq = view.findViewById(R.id.btn_faq);
+        Button btn_faq_test = view.findViewById(R.id.btn_faq_test);
         Button btn_login = view.findViewById(R.id.btn_login);
         Button btn_search_test = view.findViewById(R.id.btn_search_test);
         Button btn_112 = view.findViewById(R.id.btn_112);
 
         btn_faq.setOnClickListener(this);
+        btn_faq_test.setOnClickListener(this);
         btn_login.setOnClickListener(this);
         btn_search_test.setOnClickListener(this);
         btn_112.setOnClickListener(this);
@@ -41,6 +43,10 @@ public class FragmentPage3 extends Fragment implements View.OnClickListener{
         switch (v.getId()){
             case R.id.btn_faq:
                 Intent intent = new Intent(getActivity(), Faq.class);
+                startActivity(intent);
+                break;
+            case R.id.btn_faq_test:
+                intent = new Intent(getActivity(), Faq_test.class);
                 startActivity(intent);
                 break;
             case R.id.btn_login:
